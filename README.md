@@ -15,7 +15,7 @@
 
 > **"Every complex repository has a story to tell. PlotTwist helps you find the clues, connect the dots, and solve architectural mysteries in seconds."** 🕵️‍♀️🔍
 
-[✨ Live Demo](#-quickstart-guide) • [🎀 Features](#-magical-features) • [🏛️ Architecture](#-system-architecture) • [🚀 Quickstart](#-quickstart-guide) • [📡 API Reference](#-rest--streaming-api) • [🌸 Contributing](#-contributing)
+[Live Demo](#-quickstart-guide) • [Features](#-magical-features) • [ Architecture](#-system-architecture) • [Quickstart](#-quickstart-guide) • [API Reference](#-rest--streaming-api) • [ Contributing](#-contributing)
 
 ---
 
@@ -79,7 +79,7 @@ flowchart LR
     RAG -->|Stream Tokens| SSE
 ```
 
-### 🛠️ Technology Stack
+###  Technology Stack
 
 ```
 Frontend:
@@ -101,7 +101,7 @@ Backend:
 
 ---
 
-## 🚀 Quickstart Guide
+##  Quickstart Guide
 
 ### 📋 Prerequisites Checklist
 - [x] **Java 21 LTS** installed (`java -version`)
@@ -186,7 +186,7 @@ npm run dev
 ```
 
 Open your browser to:  
-👉 **`http://localhost:3000`** 🌸
+👉 **`http://localhost:3000`** 
 
 ---
 
