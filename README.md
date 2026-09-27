@@ -5,7 +5,7 @@
 
 ---
 
-## ✨ Features
+## Features
 
 - **AST-Aware Code Chunking**: Preserves syntactic integrity (functions, classes, interfaces) rather than naive token splitting.
 - **High-Performance pgvector RAG**: Code chunks embedded and indexed in PostgreSQL using cosine distance vector similarity.
@@ -38,7 +38,7 @@ graph TD
 
 ---
 
-## 🚀 Quickstart Guide
+##  Quickstart Guide
 
 ### 1. Prerequisites
 
