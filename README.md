@@ -3,11 +3,19 @@
 </p>
 
 <p align="center">
-  <strong>Chat with your codebase without the guesswork.</strong><br/>
-  Index any GitHub repo, ask questions in plain English, and get grounded answers with clickable line citations.
+  <a href="https://plottwist-79.vercel.app/">
+    <img src="https://img.shields.io/badge/Live_App-plottwist--79.vercel.app-10b981?style=for-the-badge&logo=vercel&logoColor=white" alt="Live App" />
+  </a>
 </p>
 
 <p align="center">
+  <strong>Chat with your codebase without the guesswork.</strong><br/>
+  Index any GitHub repo, ask questions in plain English, and get grounded answers with clickable line citations.<br/>
+  <a href="https://plottwist-79.vercel.app/"><strong>Launch PlotTwist Web App &rarr;</strong></a>
+</p>
+
+<p align="center">
+  <a href="https://plottwist-79.vercel.app/"><img src="https://img.shields.io/badge/Production-Live-success?style=flat-square&logo=vercel&logoColor=white" alt="Production Live" /></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-3b82f6?style=flat-square" alt="License" /></a>
   <a href="https://adoptium.net/"><img src="https://img.shields.io/badge/Java-21_LTS-f97316?style=flat-square&logo=openjdk&logoColor=white" alt="Java 21" /></a>
   <a href="https://spring.io/projects/spring-boot"><img src="https://img.shields.io/badge/Spring_Boot-3.4+-22c55e?style=flat-square&logo=springboot&logoColor=white" alt="Spring Boot 3" /></a>
@@ -182,7 +190,7 @@ npm install
 npm run dev
 ```
 
-Head over to **`http://localhost:3000`**, click **Continue with GitHub**, and you're good to go.
+Head over to **`http://localhost:3000`** (or try out the live production deployment at **[plottwist-79.vercel.app](https://plottwist-79.vercel.app/)**), click **Continue with GitHub**, and you're good to go.
 
 ---
 
