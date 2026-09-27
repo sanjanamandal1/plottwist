@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🌀 PlotTwist ✨
+# 🌀 PlotTwist 
 ### *Unravel the narrative behind any codebase with conversational intelligence & RAG* 📖💡
 
 [![GitHub Stars](https://img.shields.io/github/stars/sanjanamandal1/plottwist?style=for-the-badge&color=ffd1dc&logo=star&logoColor=333)](https://github.com/sanjanamandal1/plottwist/stargazers)
@@ -21,7 +21,7 @@
 
 </div>
 
-## 🌸 Why PlotTwist?
+## Why PlotTwist?
 
 Onboarding onto a legacy monolith or exploring unfamiliar open-source code can feel like diving into a labyrinth without a map. **PlotTwist** turns code exploration into an engaging, conversational journey:
 
