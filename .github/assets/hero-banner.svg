@@ -1,0 +1,136 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 480" width="100%" height="100%" style="background:#090d16;border-radius:16px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
+  <defs>
+    <!-- Background Gradients -->
+    <radialGradient id="glow1" cx="30%" cy="20%" r="60%">
+      <stop offset="0%" stop-color="#10b981" stop-opacity="0.22" />
+      <stop offset="60%" stop-color="#06b6d4" stop-opacity="0.08" />
+      <stop offset="100%" stop-color="#090d16" stop-opacity="0" />
+    </radialGradient>
+    <radialGradient id="glow2" cx="80%" cy="70%" r="50%">
+      <stop offset="0%" stop-color="#6366f1" stop-opacity="0.18" />
+      <stop offset="100%" stop-color="#090d16" stop-opacity="0" />
+    </radialGradient>
+    <linearGradient id="logoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#10b981" />
+      <stop offset="50%" stop-color="#06b6d4" />
+      <stop offset="100%" stop-color="#6366f1" />
+    </linearGradient>
+    <linearGradient id="textGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#34d399" />
+      <stop offset="50%" stop-color="#38bdf8" />
+      <stop offset="100%" stop-color="#818cf8" />
+    </linearGradient>
+    <linearGradient id="cardGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#1e293b" stop-opacity="0.8" />
+      <stop offset="100%" stop-color="#0f172a" stop-opacity="0.9" />
+    </linearGradient>
+    <linearGradient id="borderGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#334155" stop-opacity="0.8" />
+      <stop offset="100%" stop-color="#1e293b" stop-opacity="0.3" />
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="130%">
+      <feDropShadow dx="0" dy="12" stdDeviation="16" flood-color="#000" flood-opacity="0.5"/>
+    </filter>
+  </defs>
+
+  <!-- Ambient background glow -->
+  <rect width="1200" height="480" fill="#090d16" rx="16" />
+  <circle cx="360" cy="180" r="320" fill="url(#glow1)" />
+  <circle cx="940" cy="320" r="280" fill="url(#glow2)" />
+
+  <!-- Subtle grid lines -->
+  <g stroke="#334155" stroke-opacity="0.12" stroke-width="1">
+    <line x1="80" y1="0" x2="80" y2="480" />
+    <line x1="200" y1="0" x2="200" y2="480" />
+    <line x1="320" y1="0" x2="320" y2="480" />
+    <line x1="440" y1="0" x2="440" y2="480" />
+    <line x1="560" y1="0" x2="560" y2="480" />
+    <line x1="680" y1="0" x2="680" y2="480" />
+    <line x1="800" y1="0" x2="800" y2="480" />
+    <line x1="920" y1="0" x2="920" y2="480" />
+    <line x1="1040" y1="0" x2="1040" y2="480" />
+    <line x1="0" y1="80" x2="1200" y2="80" />
+    <line x1="0" y1="200" x2="1200" y2="200" />
+    <line x1="0" y1="320" x2="1200" y2="320" />
+    <line x1="0" y1="440" x2="1200" y2="440" />
+  </g>
+
+  <!-- LEFT HERO SECTION -->
+  <g transform="translate(80, 85)">
+    <!-- Brand Badge -->
+    <rect x="0" y="0" width="220" height="30" rx="15" fill="#13232a" stroke="#10b981" stroke-opacity="0.3" stroke-width="1"/>
+    <circle cx="16" cy="15" r="4" fill="#10b981" />
+    <text x="28" y="19" fill="#6ee7b7" font-size="12" font-weight="600" letter-spacing="0.5">CODEBASE INTELLIGENCE</text>
+
+    <!-- Main Title -->
+    <text x="0" y="85" fill="#f8fafc" font-size="52" font-weight="800" letter-spacing="-1.5">PlotTwist</text>
+
+    <!-- Subtitle / Hook -->
+    <text x="0" y="125" fill="#94a3b8" font-size="18" font-weight="400">
+      Unravel the architectural story behind
+    </text>
+    <text x="0" y="152" fill="url(#textGrad)" font-size="20" font-weight="600">
+      any codebase with AST-aware RAG.
+    </text>
+
+    <!-- Badges / Tags -->
+    <g transform="translate(0, 195)">
+      <rect x="0" y="0" width="105" height="28" rx="6" fill="#1e293b" />
+      <text x="12" y="18" fill="#cbd5e1" font-size="11" font-weight="500">Java 21 LTS</text>
+
+      <rect x="115" y="0" width="115" height="28" rx="6" fill="#1e293b" />
+      <text x="126" y="18" fill="#cbd5e1" font-size="11" font-weight="500">Spring AI 2.0</text>
+
+      <rect x="240" y="0" width="105" height="28" rx="6" fill="#1e293b" />
+      <text x="252" y="18" fill="#cbd5e1" font-size="11" font-weight="500">Next.js 16</text>
+
+      <rect x="355" y="0" width="110" height="28" rx="6" fill="#1e293b" />
+      <text x="367" y="18" fill="#cbd5e1" font-size="11" font-weight="500">pgvector RAG</text>
+    </g>
+  </g>
+
+  <!-- RIGHT HERO MOCKUP CARD -->
+  <g transform="translate(620, 50)" filter="url(#shadow)">
+    <!-- Terminal Window Frame -->
+    <rect x="0" y="0" width="500" height="375" rx="14" fill="url(#cardGrad)" stroke="url(#borderGrad)" stroke-width="1.5" />
+
+    <!-- Terminal Header -->
+    <rect x="0" y="0" width="500" height="42" rx="14" fill="#0f172a" fill-opacity="0.8" />
+    <circle cx="24" cy="21" r="5" fill="#ef4444" />
+    <circle cx="40" cy="21" r="5" fill="#f59e0b" />
+    <circle cx="56" cy="21" r="5" fill="#10b981" />
+    <text x="80" y="25" fill="#64748b" font-size="12" font-family="monospace">plottwist://rag-context/session</text>
+
+    <!-- User Question Bubble -->
+    <rect x="24" y="60" width="452" height="60" rx="10" fill="#1e293b" fill-opacity="0.6" stroke="#334155" stroke-opacity="0.5" stroke-width="1" />
+    <circle cx="48" cy="90" r="12" fill="#3b82f6" />
+    <text x="44" y="94" fill="#fff" font-size="11" font-weight="700">Q</text>
+    <text x="72" y="85" fill="#94a3b8" font-size="11" font-weight="600">DEVELOPER QUERY</text>
+    <text x="72" y="103" fill="#f1f5f9" font-size="13" font-weight="500">Where is the saga rollback logic implemented?</text>
+
+    <!-- AI Grounded Response Bubble -->
+    <rect x="24" y="135" width="452" height="135" rx="10" fill="#0f172a" fill-opacity="0.9" stroke="#10b981" stroke-opacity="0.4" stroke-width="1" />
+    <circle cx="48" cy="165" r="12" fill="#10b981" />
+    <text x="44" y="169" fill="#090d16" font-size="11" font-weight="800">AI</text>
+    <text x="72" y="160" fill="#34d399" font-size="11" font-weight="700">PLOTTWIST RESPONSE (STREAMED)</text>
+    <text x="72" y="180" fill="#e2e8f0" font-size="12">Rollback is orchestrated via <tspan font-family="monospace" fill="#38bdf8">PaymentOrchestrator</tspan></text>
+    <text x="72" y="198" fill="#e2e8f0" font-size="12">which catches timeout events and triggers ledger voids:</text>
+
+    <!-- Citation Chips -->
+    <g transform="translate(72, 215)">
+      <rect x="0" y="0" width="220" height="26" rx="6" fill="#13232a" stroke="#10b981" stroke-opacity="0.4" stroke-width="1"/>
+      <text x="10" y="17" fill="#6ee7b7" font-size="11" font-family="monospace">src/saga/PaymentOrchestrator.ts:45</text>
+    </g>
+    <g transform="translate(300, 215)">
+      <rect x="0" y="0" width="135" height="26" rx="6" fill="#1e1e38" stroke="#6366f1" stroke-opacity="0.4" stroke-width="1"/>
+      <text x="10" y="17" fill="#a5b4fc" font-size="11" font-family="monospace">events/Saga.ts:112</text>
+    </g>
+
+    <!-- Code AST Box -->
+    <rect x="24" y="285" width="452" height="70" rx="8" fill="#030712" stroke="#1e293b" stroke-width="1" />
+    <text x="40" y="307" fill="#38bdf8" font-size="11" font-family="monospace">async function</text>
+    <text x="135" y="307" fill="#f8fafc" font-size="11" font-family="monospace">rollbackSaga(ctx: SagaContext) {</text>
+    <text x="60" y="327" fill="#64748b" font-size="11" font-family="monospace">await ledger.markVoided(ctx.txnId);</text>
+    <text x="60" y="343" fill="#34d399" font-size="10" font-family="monospace">// Vector similarity score: 0.94</text>
+  </g>
+</svg>
