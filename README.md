@@ -3,8 +3,8 @@
 </p>
 
 <p align="center">
-  <strong>The architectural narrative engine for complex codebases.</strong><br/>
-  Interrogate repositories, trace execution paths, and inspect AST-grounded answers with verifiable citations.
+  <strong>Chat with your codebase without the guesswork.</strong><br/>
+  Index any GitHub repo, ask questions in plain English, and get grounded answers with clickable line citations.
 </p>
 
 <p align="center">
@@ -18,151 +18,147 @@
 
 ---
 
-## The Concept
+## Why we built this
 
-Code isn't prose; it is an interconnected graph of intents, boundaries, and trade-offs. Reading code linearly like a book rarely works when onboarding onto multi-thousand-line microservices or unfamiliar monoliths.
+Ever clone a project, try to find where a single feature lives, and end up with 30 tabs open and no idea what's going on? 
 
-**PlotTwist** unravels the story behind any repository. By pairing abstract syntax tree (AST) chunking with PostgreSQL `pgvector` embeddings and Spring AI retrieval, PlotTwist turns codebase interrogation into a grounded conversational dialogue.
+Most codebases don't have good documentation. Even when they do, docs get outdated fast. You're usually stuck regex-grepping for variable names or asking the one teammate who remembers how the plumbing works.
 
-Every answer is verified against actual files, streaming token-by-token directly to your screen with clickable line citations.
+**PlotTwist** fixes that. You link your GitHub, pick a repo, and let it index. From there, you can just ask questions like *"Where do we handle expired auth tokens?"* or *"Walk me through the payment checkout flow"*. 
+
+PlotTwist pulls up the relevant code chunks from PostgreSQL vector search, streams the explanation back in real-time, and gives you clickable chips pointing to the exact lines on GitHub so you can verify it yourself.
 
 ```
-Traditional Code Exploration            With PlotTwist
-─────────────────────────────           ─────────────────────────────────────
-• Blind regex grepping                  • AST-aware semantic retrieval
-• Guessing cross-file dependencies      • Top-K cosine similarity matching
-• Stale wiki documentation              • Line-by-line verified citations
-• Context loss across commits           • Real-time SSE token streaming
+The usual way                                 With PlotTwist
+─────────────────────────────                 ─────────────────────────────────────
+• Cmd+F across 40 files                       • Just ask in plain English
+• Reading 3-year-old docs                     • Always grounded in current code
+• Guessing cross-service dependencies         • Instant semantic search via pgvector
+• Hallucinated answers from generic AI        • Clickable line citations back to GitHub
 ```
 
 ---
 
-## Design Highlights
+## What's under the hood
 
-### 1. AST-Aware Semantic Chunking
-Naive token splitting cuts through class definitions and mid-expression statements, destroying the context the model needs. PlotTwist’s ingestion engine respects language syntax boundaries—grouping classes, method declarations, and module interfaces into unified semantic units.
+### Smart code chunking (not just blind text splitting)
+Splitting code every 500 characters usually cuts right through the middle of a function or class. PlotTwist parses code along syntax boundaries so functions, classes, and interfaces stay together as complete thoughts.
 
-### 2. High-Dimensional Vector Space (`pgvector`)
-Chunks are embedded and indexed into PostgreSQL using the `pgvector` extension with Hierarchical Navigable Small World (`HNSW`) indexing. Searches run in sub-second time with cosine distance scoring and metadata filtering.
+### pgvector for lightning-fast retrieval
+We store code embeddings directly in PostgreSQL using `pgvector` with HNSW indexing. Searching through thousands of code chunks takes less than 350ms.
 
-### 3. Clickable Source Citations
-No hallucinations or unverifiable claims. PlotTwist extracts line-level references from the retrieved chunks and surfaces them as interactive chips (`src/services/Auth.ts:L42-68`) pointing directly to your GitHub repository.
+### Clickable source citations
+Whenever PlotTwist explains something, it cites the exact files and line numbers it used. Click any chip (`src/auth/jwt.ts:L42-80`) and it opens right up in GitHub.
 
-### 4. Zero-Trust Token Encryption
-GitHub access tokens are never saved as plain text. Every token is sealed at rest using AES-256 GCM encryption with unique salts derived through PBKDF2.
+### Real-time streaming
+No waiting for a full paragraph to load. Tokens stream into the UI as they're generated over Server-Sent Events (SSE).
 
-### 5. Reactive Token Streaming
-Responses stream token-by-token using HTTP Server-Sent Events (SSE) from the Spring Boot backend straight to the React interface, providing instant feedback without polling.
+### Encrypted tokens at rest
+Your GitHub personal tokens are never stored in plain text. Everything gets encrypted with AES-256 GCM using PBKDF2-derived keys before hitting the database.
 
 ---
 
-## Architecture Flow
+## How it works
 
 ```mermaid
 flowchart TD
-    subgraph Client ["Frontend (Next.js 16 App Router)"]
-        UI[App Shell & Repo Dashboard]
-        Chat[Chat View & Stream Consumer]
+    subgraph Frontend ["Next.js 16 App"]
+        UI[Dashboard & Repo Picker]
+        Chat[Chat Window & SSE Consumer]
     end
 
-    subgraph Backend ["Backend (Spring Boot 3.4 & Java 21)"]
-        Auth[OAuth2 & AES-256 GCM Security]
-        Crawler[Rate-Limited GitHub Crawler]
-        Chunker[AST Semantic Code Chunker]
+    subgraph Backend ["Spring Boot 3.4 & Java 21"]
+        Auth[GitHub OAuth & AES Encryption]
+        Crawler[GitHub Repo Ingestion]
+        Chunker[AST Semantic Chunker]
         RAG[Spring AI Retrieval Pipeline]
-        SSE[SSE Stream Controller]
+        SSE[SSE Stream Handler]
     end
 
-    subgraph Storage ["Storage & AI"]
-        PG[(PostgreSQL 16 + pgvector)]
-        Embeddings[OpenAI / LLM API]
+    subgraph DataLayer ["Database & AI"]
+        PG[(Postgres 16 + pgvector)]
+        AI[OpenAI / LLM API]
     end
 
     UI -->|REST API| Auth
-    Chat -->|SSE Stream /api/chat/stream| SSE
-    Auth -->|OAuth2 Handshake| Crawler
-    Crawler -->|Fetch Source Files| Chunker
-    Chunker -->|Generate Embeddings| Embeddings
-    Embeddings -->|Store Vectors| PG
-    RAG -->|Similarity Search Top-K| PG
-    RAG -->|Stream Tokens| SSE
+    Chat -->|SSE Stream| SSE
+    Auth -->|OAuth handshake| Crawler
+    Crawler -->|Grab source files| Chunker
+    Chunker -->|Generate embeddings| AI
+    AI -->|Store vectors| PG
+    RAG -->|Similarity search| PG
+    RAG -->|Stream answer tokens| SSE
 ```
 
 ---
 
-## Stack Specifications
+## Tech stack
 
-| Layer | Technology | Details |
-|---|---|---|
-| **Frontend** | Next.js 16 (Turbopack) | React 19, App Router, TypeScript 5 |
-| **Styling** | Tailwind CSS v4 | Dynamic OKLCH colors, Base UI primitives |
-| **State** | TanStack Query v5 | Server state caching & optimistic updates |
-| **Backend** | Spring Boot 3.4+ | Java 21 LTS, Spring Framework 6.2 |
-| **AI / RAG** | Spring AI 2.0+ | VectorStore abstraction, OpenAI starter |
-| **Security** | Spring Security 6 | OAuth2 Client, AES-256 GCM cryptography |
-| **Persistence** | PostgreSQL 16 | `pgvector` extension with HNSW indexing |
-| **Container** | Docker Compose | Isolated PostgreSQL container on port `5433` |
+- **Frontend**: Next.js 16 (App Router, Turbopack), React 19, TypeScript, Tailwind CSS v4, Base UI, TanStack Query
+- **Backend**: Java 21 LTS, Spring Boot 3.4+, Spring AI 2.0+, Spring Security (OAuth2), Hibernate 7 / JPA
+- **Database**: PostgreSQL 16 with `pgvector`
+- **Containers**: Docker Compose (runs Postgres on port `5433` so it doesn't mess with your local port `5432`)
 
 ---
 
-## Quickstart Guide
+## Getting started
 
-### Prerequisites
-- **Java 21 LTS** (`Eclipse Adoptium Temurin 21` recommended)
-- **Node.js 20+** & **npm**
-- **Docker Desktop**
-- **GitHub Account** (for OAuth app credentials)
-- **OpenAI API Key**
+### What you'll need
+- Java 21 LTS (Temurin recommended)
+- Node.js 20+
+- Docker Desktop (for Postgres + pgvector)
+- A GitHub account (takes 2 minutes to create an OAuth app)
+- An OpenAI API key
 
 ---
 
-### Step 1. Start the Database
+### 1. Spin up the database
 
-Run PostgreSQL with `pgvector` pre-configured:
+We've got a Docker Compose file ready to go with PostgreSQL and `pgvector`:
 
 ```bash
 docker compose up -d
 ```
 
-> **Note**: Port `5433` is mapped to avoid conflicting with any default local PostgreSQL instance on port `5432`.
+*(We map it to port `5433` so it doesn't clash with any PostgreSQL instance you might already have on port `5432`.)*
 
-Confirm the container is healthy:
+Check that it's running:
 ```bash
 docker ps --filter "name=plottwist-postgres"
 ```
 
 ---
 
-### Step 2. Register Your GitHub OAuth App
+### 2. Set up GitHub OAuth
 
-1. Head to **GitHub Settings → Developer settings → OAuth Apps → New OAuth App**.
-2. Fill in the required fields:
+1. Hop over to **GitHub Settings → Developer settings → OAuth Apps → New OAuth App**.
+2. Put in:
    - **Application Name**: `PlotTwist`
    - **Homepage URL**: `http://localhost:3000`
    - **Authorization callback URL**: `http://localhost:8080/login/oauth2/code/github`
-3. Click **Register application**, generate a **Client Secret**, and note down your **Client ID** and **Client Secret**.
+3. Click **Register**, generate a **Client Secret**, and copy both the Client ID and Secret.
 
 ---
 
-### Step 3. Launch the Backend
+### 3. Start the backend
 
-#### Windows (PowerShell):
+#### On Windows (PowerShell):
 ```powershell
 cd backend
 
-# Point to your Java 21 JDK installation
+# Point to Java 21
 $env:JAVA_HOME = "C:\Program Files\Eclipse Adoptium\jdk-21.0.4.7-hotspot"
 
-# Set your secrets
+# Set your keys
 $env:GITHUB_CLIENT_ID = "your_github_client_id"
 $env:GITHUB_CLIENT_SECRET = "your_github_client_secret"
 $env:OPENAI_API_KEY = "your_openai_api_key"
 
-# Run Spring Boot
+# Fire it up
 .\mvnw.cmd spring-boot:run
 ```
 
-#### macOS / Linux:
+#### On Mac / Linux:
 ```bash
 cd backend
 export GITHUB_CLIENT_ID="your_github_client_id"
@@ -172,11 +168,11 @@ export OPENAI_API_KEY="your_openai_api_key"
 ./mvnw spring-boot:run
 ```
 
-The Spring Boot backend will start on **`http://localhost:8080`**.
+The backend boots up on **`http://localhost:8080`**.
 
 ---
 
-### Step 4. Launch the Frontend
+### 4. Start the frontend
 
 In another terminal window:
 
@@ -186,87 +182,87 @@ npm install
 npm run dev
 ```
 
-Visit **`http://localhost:3000`** in your browser.
+Head over to **`http://localhost:3000`**, click **Continue with GitHub**, and you're good to go.
 
 ---
 
-## Directory Organization
+## Project layout
 
 ```
 plottwist/
 ├── .github/
-│   ├── assets/hero-banner.svg   # Designer SVG header banner
-│   └── workflows/ci.yml         # GitHub Actions build pipeline
+│   ├── assets/hero-banner.svg   # Header banner
+│   └── workflows/ci.yml         # GitHub Actions build check
 ├── backend/
 │   ├── src/main/java/plottwist/backend/
-│   │   ├── config/              # Security, CORS, Crypto, Jackson configuration
+│   │   ├── config/              # Security, CORS, crypto, Jackson beans
 │   │   ├── controllers/         # REST & SSE streaming endpoints
-│   │   ├── dto/                 # Request/response records
-│   │   ├── entity/              # JPA models (User, Repository, ChatSession)
-│   │   ├── exceptions/          # Centralised error handling
-│   │   ├── repository/          # Spring Data JPA repositories
-│   │   ├── security/            # OAuth2 principal mapping & token crypto
+│   │   ├── dto/                 # Request/response shapes
+│   │   ├── entity/              # User, Repo, ChatSession tables
+│   │   ├── exceptions/          # Error responses
+│   │   ├── repository/          # JPA data access
+│   │   ├── security/            # OAuth login & token encryption
 │   │   └── services/
-│   │       ├── ai/              # Prompt builders, context retrievers, SSE handlers
-│   │       ├── github/          # Rate-limited repository crawler
-│   │       └── indexing/        # AST chunker & pgvector indexer
+│   │       ├── ai/              # Prompt builder, retriever, SSE streaming
+│   │       ├── github/          # Rate-limited repo crawler
+│   │       └── indexing/        # AST chunker & vector indexer
 │   ├── src/main/resources/
 │   │   └── application.properties
 │   └── pom.xml
 ├── client/
 │   ├── app/
-│   │   ├── auth/callback/       # OAuth session landing page
-│   │   ├── chat/[repoId]/       # Codebase conversational workspace
-│   │   ├── dashboard/           # Repository list & indexing progress
+│   │   ├── auth/callback/       # OAuth redirect handler
+│   │   ├── chat/[repoId]/       # Chat interface
+│   │   ├── dashboard/           # Repo list & indexing status
 │   │   ├── login/               # Sign-in page
-│   │   ├── globals.css          # Design system tokens
-│   │   └── page.tsx             # Interactive landing page
+│   │   ├── globals.css          # Theme & styles
+│   │   └── page.tsx             # Landing page
 │   ├── components/
-│   │   ├── chat/                # Composer, markdown renderer, citation chips
-│   │   ├── dashboard/           # Repo cards, sync triggers, metrics
-│   │   ├── icons/               # PlotTwist SVG brand marks
-│   │   └── ui/                  # Base UI component primitives
-│   ├── hooks/                   # React Query & SSE stream hooks
-│   └── lib/                     # API client, nav configs, query keys
+│   │   ├── chat/                # Composer, markdown, citation chips
+│   │   ├── dashboard/           # Repo cards, sync triggers
+│   │   ├── icons/               # PlotTwist SVG logos
+│   │   └── ui/                  # Base UI components
+│   ├── hooks/                   # React Query & SSE hooks
+│   └── lib/                     # API helpers, route configs
 ├── docker/
 │   └── postgres/
-│       └── init-extensions.sql  # CREATE EXTENSION IF NOT EXISTS vector;
-├── docker-compose.yml           # pgvector container configuration
+│       └── init-extensions.sql  # Sets up pgvector extension
+├── docker-compose.yml           # Database container
 ├── LICENSE                      # MIT License
 └── README.md
 ```
 
 ---
 
-## API Reference
+## API endpoints
 
-| Endpoint | Method | Description | Auth |
+| Endpoint | Method | What it does | Auth required? |
 |---|:---:|---|:---:|
-| `/` | `GET` | API health check & server status | No |
-| `/api/auth/me` | `GET` | Return authenticated user details | Yes |
-| `/api/auth/logout` | `POST` | Invalidate session & clear cookies | Yes |
-| `/api/repos` | `GET` | List synchronized GitHub repositories | Yes |
-| `/api/repos/{id}/index` | `POST` | Trigger AST chunking & vector indexing | Yes |
-| `/api/repos/{id}/index-status` | `GET` | Poll repository indexing progress | Yes |
-| `/api/repos/{id}/sessions` | `GET` | Fetch chat session history | Yes |
-| `/api/repos/{id}/sessions` | `POST` | Create a new conversation session | Yes |
-| `/api/repos/{id}/sessions/{sid}/messages` | `GET` | Message history for a specific session | Yes |
-| `/api/chat/stream` | `GET` | Real-time SSE token stream | Yes |
+| `/` | `GET` | Health check & server status | No |
+| `/api/auth/me` | `GET` | Get current logged-in user profile | Yes |
+| `/api/auth/logout` | `POST` | Log out and clear cookies | Yes |
+| `/api/repos` | `GET` | List user's connected GitHub repos | Yes |
+| `/api/repos/{id}/index` | `POST` | Trigger repository indexing & vector embedding | Yes |
+| `/api/repos/{id}/index-status` | `GET` | Check current indexing progress | Yes |
+| `/api/repos/{id}/sessions` | `GET` | Get chat session history for a repo | Yes |
+| `/api/repos/{id}/sessions` | `POST` | Start a new chat session | Yes |
+| `/api/repos/{id}/sessions/{sid}/messages` | `GET` | Get messages from a specific chat | Yes |
+| `/api/chat/stream` | `GET` | Stream AI answer tokens over SSE | Yes |
 
 ---
 
 ## Contributing
 
-Pull requests and issues are welcome. For major architectural changes, please open an issue first to discuss the design.
+Want to help make PlotTwist better? We'd love your help:
 
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/ast-enhancement`)
-3. Commit your changes (`git commit -m 'feat: enhance AST boundary detection'`)
-4. Push to the branch (`git push origin feature/ast-enhancement`)
+1. Fork the repo
+2. Make your branch (`git checkout -b feature/cool-idea`)
+3. Commit your changes (`git commit -m 'feat: add something cool'`)
+4. Push to your branch (`git push origin feature/cool-idea`)
 5. Open a Pull Request
 
 ---
 
 ## License
 
-PlotTwist is open-source software licensed under the [MIT License](LICENSE).
+PlotTwist is open-source under the [MIT License](LICENSE).
