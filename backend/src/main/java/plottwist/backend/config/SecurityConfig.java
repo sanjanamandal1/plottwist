@@ -13,6 +13,11 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 
+import org.springframework.security.config.oauth2.client.CommonOAuth2Provider;
+import org.springframework.security.oauth2.client.registration.ClientRegistration;
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
+import org.springframework.security.oauth2.client.registration.InMemoryClientRegistrationRepository;
+
 import plottwist.backend.security.GithubOAuth2UserService;
 import lombok.RequiredArgsConstructor;
 
@@ -33,6 +38,18 @@ public class SecurityConfig {
 
     @Value("${app.frontend.url:http://localhost:3000}")
     private String frontendUrl;
+
+    @Bean
+    public ClientRegistrationRepository clientRegistrationRepository(
+            @Value("${spring.security.oauth2.client.registration.github.client-id}") String clientId,
+            @Value("${spring.security.oauth2.client.registration.github.client-secret}") String clientSecret) {
+        ClientRegistration github = CommonOAuth2Provider.GITHUB.getBuilder("github")
+                .clientId(clientId != null ? clientId.trim() : "")
+                .clientSecret(clientSecret != null ? clientSecret.trim() : "")
+                .scope("read:user", "repo")
+                .build();
+        return new InMemoryClientRegistrationRepository(github);
+    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
